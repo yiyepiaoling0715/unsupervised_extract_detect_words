@@ -17,7 +17,8 @@ import math
 import multiprocessing as mp
 
 from multiprocess_deal import split_dict_data
-from util_funcs import _calc_idf, reverse_first, calc_pmi, calc_entropy, _filter_by_freq
+from util_funcs import _calc_idf, reverse_first, calc_pmi, calc_entropy, _filter_str
+
 
 
 class Node(object):
@@ -195,7 +196,6 @@ class Trie(object):
 
         processes = []
         for strconcat2entropy_dict_slice_iter in strconcat2entropy_dict_slices:
-            # process_deal(self.process_iter)
             process_iter = mp.Process(target=self.process_iter, args=(
                 strconcat2entropy_dict_slice_iter, strconcat2pmi_dict, strconcat2score_dict))
             processes.append(process_iter)
@@ -206,7 +206,7 @@ class Trie(object):
 
         strconcat2score_sorted = sorted(strconcat2score_dict.items(), key=lambda x: x[1], reverse=True)
         strconcat2score_sorted = [iterow for iterow in strconcat2score_sorted if
-                                  _filter_by_freq(''.join(iterow[0].split('_')), lines)]
+                                  _filter_str(''.join(iterow[0].split('_')), lines)]
         return strconcat2score_sorted[:topn]
 
 

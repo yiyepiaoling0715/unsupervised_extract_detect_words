@@ -2,8 +2,30 @@ import functools
 import math
 
 import numpy as np
-
+import jieba
 from configs import Thresholds as ths
+
+
+def _load_stopwords():
+    with open('./files/stopword.txt', 'r', encoding='utf-8') as fr:
+        lines = [line.strip('\r\n ') for line in fr]
+        return lines
+
+
+stopwords = _load_stopwords()
+
+
+def _jieba_lcut(line_in):
+    words = jieba.lcut(line_in)
+    words_filtered = [word for word in words if word not in stopwords]
+    return words_filtered
+
+
+def _write_file(lines_in, filepath):
+    print('开始写文件')
+    with open(filepath, 'w') as fw:
+        for line_iter in lines_in:
+            fw.write(str(line_iter) + '\n')
 
 
 def _generate_ngram(words_in, ngram=3):
@@ -94,6 +116,18 @@ def _filter_by_freq(str_in, lines_in):
         return True
     return False
 
+def _filter_by_words(str_in):
+    start_forbidden=('以上','不','在','内','中','或','一项','须','完成')
+    end_forbidden=('以上','不','在','内','中','或','一项','须','完成')
+    assert isinstance(str_in,str)
+    if str_in.startswith(start_forbidden) or str_in.endswith(end_forbidden):
+        return False
+    return True
+def _filter_str(str_in,lines_in):
+    if _filter_by_words(str_in):
+        if _filter_by_freq(str_in,lines_in):
+            return True
+    return False
 
 if __name__ == '__main__':
     words = ['我', '和你', '心连心', '同住', '地球村']

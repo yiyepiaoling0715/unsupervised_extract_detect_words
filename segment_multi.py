@@ -21,33 +21,12 @@ from configs import output_dirpath
 from get_corpus import _read_corpus_mgr_groupby_file
 from patterns import Patterns
 from trie_multi import Trie
-from util_funcs import _generate_ngram
+from util_funcs import _generate_ngram,_jieba_lcut,_write_file
 
 _pattern_class = Patterns()
 
 result_filepath = os.path.join(output_dirpath, 'result.txt')
 
-
-def _load_stopwords():
-    with open('./files/stopword.txt', 'r', encoding='utf-8') as fr:
-        lines = [line.strip('\r\n ') for line in fr]
-        return lines
-
-
-stopwords = _load_stopwords()
-
-
-def _jieba_lcut(line_in):
-    words = jieba.lcut(line_in)
-    words_filtered = [word for word in words if word not in stopwords]
-    return words_filtered
-
-
-def _write_file(lines_in, filepath):
-    print('开始写文件')
-    with open(filepath, 'w') as fw:
-        for line_iter in lines_in:
-            fw.write(str(line_iter) + '\n')
 
 
 def train_with_idf_multiprocessing():
